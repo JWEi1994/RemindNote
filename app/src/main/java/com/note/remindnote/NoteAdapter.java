@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -11,6 +12,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NoteAdapter extends BaseAdapter implements Filterable {
@@ -71,14 +73,35 @@ public class NoteAdapter extends BaseAdapter implements Filterable {
     }
 
     class MyFilter extends Filter {
-        
+
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-            return null;
+            FilterResults result = new FilterResults();
+            List<Note> list;
+            if (TextUtils.isEmpty(constraint)) { //will show all the notes when searching keyword are empty
+                list = backList;
+            } else {
+                list = new ArrayList<>();
+                for (Note note : backList) {
+                    if (note.getContent().contains(constraint)) {
+                        list.add(note);
+                    }
+                }
+            }
+            result.values = list; //the result will save into values of FilterResults
+            result.count = list.size(); // result size will save into count of FilterResults
+
+            return result;
         }
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
+            noteList = (List<Note>) results.values;
+            if (results.count > 0) {
+                notifyDataSetChanged();//success
+            } else {
+                notifyDataSetInvalidated();//failure
+            }
         }
     }
 }
