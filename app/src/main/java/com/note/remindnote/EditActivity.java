@@ -1,18 +1,19 @@
 package com.note.remindnote;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -154,6 +155,14 @@ public class EditActivity extends BaseActivity {
             ed.setSelection(old_content.length());
 
         }
+    }
+
+    @Override
+    protected void needRefresh() {
+        Log.d(TAG, "needRefresh: Edit");
+        setNightMode();
+        Intent intent = new Intent(this, EditActivity.class);
+        startActivity(intent);
     }
 
     @Override

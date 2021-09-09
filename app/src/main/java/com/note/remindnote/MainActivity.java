@@ -13,9 +13,11 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.Image;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -38,11 +41,13 @@ import java.util.List;
 public class MainActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
     private database dbhelper;
+
     private Context context = this;
     final String TAG = "tag";
     FloatingActionButton btn;
     TextView tv;
     private ListView lv;
+
     private NoteAdapter adapter;
     private List<Note> noteList = new ArrayList<Note>();
     private Toolbar myToolbar;
@@ -56,12 +61,19 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
     private RelativeLayout main;
     private WindowManager wm;
     private DisplayMetrics metrics;
+    private TextView settingText;
+    private ImageView settingImage;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        TypedValue typedValue = new TypedValue();
+        context.getTheme().resolveAttribute(R.attr.lvBackground, typedValue, true);
+        Log.d(TAG, "onCreate: " + typedValue.data + " " + typedValue.resourceId);
+        Log.d(TAG, "onCreate: " + getTheme().toString());
+
         btn = findViewById(R.id.fabtn);
         // tv = findViewById(R.id.tv);
         lv = findViewById(R.id.lv);
@@ -79,6 +91,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         myToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d(TAG, "onClick:shit");
                 showPopUpView();
             }
         });
@@ -94,6 +107,15 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             }
         });
 
+    }
+
+    @Override
+    protected void needRefresh() {
+        Log.d(TAG, "needRefresh: Main");
+        setNightMode();
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     public void initPopUpView() {
@@ -113,12 +135,30 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         popupCover = new PopupWindow(coverView, width, height, false);
         popupWindow = new PopupWindow(customView, (int) (width * 0.7), height, true);
         popupWindow.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+
         //load main activity then show popup
         findViewById(R.id.main_layout).post(new Runnable() {
             @Override
             public void run() {
                 popupCover.showAtLocation(main, Gravity.NO_GRAVITY, 0, 0);
                 popupWindow.showAtLocation(main, Gravity.NO_GRAVITY, 0, 0);
+
+                settingImage = customView.findViewById(R.id.setting_settings_image);
+                settingText = customView.findViewById(R.id.setting_settings_text);
+
+                settingImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        startActivity(new Intent(MainActivity.this, UserSettingsActivity.class));
+                    }
+                });
+
+                settingText.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        startActivity(new Intent(MainActivity.this, UserSettingsActivity.class));
+                    }
+                });
 
                 coverView.setOnTouchListener(new View.OnTouchListener() {
                     @Override
@@ -148,6 +188,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         note_Id = data.getExtras().getLong("id", 0);
 
         if (returnMode == 1) {  //return mode 1 = update current note
+
             String content = data.getExtras().getString("content");
             String time = data.getExtras().getString("time");
             int tag = data.getExtras().getInt("tag", 1);
@@ -169,6 +210,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             op.open();
             op.addNote(newNote);
             op.close();
+
         } else if (returnMode == 2) { //delete note
             Note curNote = new Note();
             curNote.setId((note_Id));
@@ -176,6 +218,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             op.open();
             op.removeNote(curNote);
             op.close();
+
         } else {
 
         }
@@ -204,7 +247,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             @Override
             public boolean onQueryTextSubmit(String s) {
                 return false;
-            } //enter then press submit but we dont have
+            } //enter then press submit but we don't have
 
             @Override
             public boolean onQueryTextChange(String s) {
@@ -212,6 +255,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                 return false;
             }
         });
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -244,6 +288,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
     }
 
     private void refreshListView() {
+
         CRUD op = new CRUD(context);
         op.open();
         // set adapter
@@ -269,4 +314,18 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                 break;
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (popupWindow != null && popupWindow.isShowing()) {
+            popupWindow.dismiss();
+            popupWindow = null;
+        }
+        if (popupCover != null && popupCover.isShowing()) {
+            popupCover.dismiss();
+            popupCover = null;
+        }
+    }
+
 }

@@ -9,6 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/DayTheme">
+        <activity android:name=".EditActivity"></activity>
+        <activity android:name=".UserSettingsActivity"></activity>
+        <activity android:name=".BaseActivity"></activity>
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -18,9 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".EditActivity">
 
-        </activity>
     </application>
 
 </manifest>
