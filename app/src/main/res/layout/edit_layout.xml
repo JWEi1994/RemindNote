@@ -13,13 +13,103 @@
         android:elevation="4dp"
         android:theme="?attr/toolbarTheme"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:titleTextColor="?attr/titleColor">
-        ></androidx.appcompat.widget.Toolbar>
+        app:titleTextColor="?attr/titleColor" />
+
+    <EditText
+        android:id="@+id/edTitle"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:gravity="top"
+        android:inputType="textPersonName"
+        android:padding="10dp"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
 
     <EditText
         android:id="@+id/ed"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:gravity="top"></EditText>
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:gravity="start|top"
+        android:inputType="textMultiLine"
+        android:minHeight="100dp"
+        android:padding="10dp" />
+
+    <LinearLayout
+        android:id="@+id/layoutChangeStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:background="@color/white"
+        app:layout_constraintTop_toBottomOf="@+id/noteDetail">
+
+        <TextView
+            android:id="@+id/btnbold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="buttonBold"
+            android:padding="10dp"
+            android:text="B"
+            android:textSize="15dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/btnitalic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="buttonItalic"
+            android:padding="10dp"
+            android:text="I"
+            android:textSize="15dp"
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/btnitalicBold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="buttonItalicBold"
+            android:padding="10dp"
+            android:text="Aa"
+            android:textSize="15dp"
+            android:textStyle="italic|bold" />
+
+        <TextView
+            android:id="@+id/btnunderline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="buttonUnderline"
+            android:padding="10dp"
+            android:text="@string/underline"
+            android:textSize="15dp"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/btnnormal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="buttonNormal"
+            android:padding="10dp"
+            android:text="Clear Format"
+            android:textSize="15dp"
+            android:textStyle="normal" />
+
+        <ImageButton
+            android:id="@+id/upload_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_image_black_24" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:minHeight="200dp" />
+
 
 </LinearLayout>

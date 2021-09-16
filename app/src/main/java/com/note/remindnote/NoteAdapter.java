@@ -18,8 +18,8 @@ import java.util.List;
 public class NoteAdapter extends BaseAdapter implements Filterable {
     private Context mContext;
 
-    private List<Note> backList;//用来备份原始数据
-    private List<Note> noteList;//这个数据是会改变的，所以要有个变量来备份一下原始数据
+    private List<Note> backList;
+    private List<Note> noteList;
     private MyFilter mFilter;
 
     public NoteAdapter(Context mContext, List<Note> noteList) {
@@ -52,7 +52,7 @@ public class NoteAdapter extends BaseAdapter implements Filterable {
         TextView tv_time = v.findViewById(R.id.tv_time);
 
         //Set text for TextView
-        String allText = noteList.get(position).getContent();
+        String allText = noteList.get(position).getTitle();
         /*if(sharedPreferences.getBoolean("noteTitle", true))
             tv_content.setText(allText.split("\n")[0]);*/
         tv_content.setText(allText);
@@ -83,7 +83,7 @@ public class NoteAdapter extends BaseAdapter implements Filterable {
             } else {
                 list = new ArrayList<>();
                 for (Note note : backList) {
-                    if (note.getContent().contains(constraint)) {
+                    if (note.getTitle().contains(constraint)) {
                         list.add(note);
                     }
                 }

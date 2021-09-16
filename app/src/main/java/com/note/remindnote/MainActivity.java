@@ -10,11 +10,14 @@ import androidx.core.view.LayoutInflaterCompat;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.Image;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -27,15 +30,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends BaseActivity implements AdapterView.OnItemClickListener {
@@ -47,6 +53,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
     FloatingActionButton btn;
     TextView tv;
     private ListView lv;
+    EditText ed;
 
     private NoteAdapter adapter;
     private List<Note> noteList = new ArrayList<Note>();
@@ -64,6 +71,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
     private TextView settingText;
     private ImageView settingImage;
 
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +82,9 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         Log.d(TAG, "onCreate: " + typedValue.data + " " + typedValue.resourceId);
         Log.d(TAG, "onCreate: " + getTheme().toString());
 
+        ed = findViewById(R.id.ed);
         btn = findViewById(R.id.fabtn);
+        
         // tv = findViewById(R.id.tv);
         lv = findViewById(R.id.lv);
         myToolbar = findViewById(R.id.myToolbar);
@@ -106,7 +116,6 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                 startActivityForResult(intent, 0);
             }
         });
-
     }
 
     @Override
@@ -189,11 +198,13 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
 
         if (returnMode == 1) {  //return mode 1 = update current note
 
+//            String html = Html.toHtml(ed.getText());
+            String title = data.getExtras().getString("title");
             String content = data.getExtras().getString("content");
             String time = data.getExtras().getString("time");
             int tag = data.getExtras().getInt("tag", 1);
 
-            Note newNote = new Note(content, time, tag);
+            Note newNote = new Note(title, content, time, tag);
             newNote.setId(note_Id);
             CRUD op = new CRUD(context);
             op.open();
@@ -201,11 +212,13 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             op.close();
 
         } else if (returnMode == 0) {  // return mode 0 = create new note
+
+            String title = data.getExtras().getString("title");
             String content = data.getExtras().getString("content");
             String time = data.getExtras().getString("time");
             int tag = data.getExtras().getInt("tag", 1);
 
-            Note newNote = new Note(content, time, tag);
+            Note newNote = new Note(title, content, time, tag);
             CRUD op = new CRUD(context);
             op.open();
             op.addNote(newNote);
@@ -282,7 +295,6 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                     }
                 }).create().show();
                 break;
-
         }
         return super.onOptionsItemSelected(item);
     }
@@ -304,6 +316,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             case R.id.lv: //
                 Note curNote = (Note) parent.getItemAtPosition(position);
                 Intent intent = new Intent(MainActivity.this, EditActivity.class);
+                intent.putExtra("title", curNote.getTitle());
                 intent.putExtra("content", curNote.getContent());
                 intent.putExtra("id", curNote.getId());
                 intent.putExtra("time", curNote.getTime());
